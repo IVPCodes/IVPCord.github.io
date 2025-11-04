@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>IVPCord Chat</title>
+  </head>
+  <body>
+    <h1>Welcome to IVPCord 💬</h1>
+    <div id="messages"></div>
+    <input id="msg" placeholder="Schreib was..." />
+    <button onclick="sendMsg()">Send</button>
 
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    <script>
+      // HIER DEINE SUPABASE DATEN REIN
+      const SUPABASE_URL = "https://bniigvwihpigupfjvqcb.supabase.co"
+      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuaWlndndpaHBpZ3VwZmp2cWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODI1MzMsImV4cCI6MjA3Nzg1ODUzM30.5VYudCVv246Pa0Ilz3Q09N3adFygbZm6sXahrcr3knk"
+
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+      async function loadMessages() {
+        const { data } = await supabase.from('messages').select('*').limit(10)
+        document.getElementById('messages').innerHTML =
+          data.map(m => `<p>${m.content}</p>`).join('')
+      }
+
+      async function sendMsg() {
+        const msg = document.getElementById('msg').value
+        await supabase.from('messages').insert([{ content: msg, channel_id: 'dein_channel_id', user_id: 'deine_user_id' }])
+        document.getElementById('msg').value = ''
+        loadMessages()
+      }
+
+      loadMessages()
+    </script>
+  </body>
+</html>
